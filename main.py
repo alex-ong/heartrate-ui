@@ -15,7 +15,7 @@ class Window(Frame):
         self.master = master
         self.font = self.setup_font()
         self.scraper = Scraper()
-        self.config(bg="#0f0f0f")
+        self.config(bg="#000000")
         self.data = [0]*240
         self.init_window()
 
@@ -23,10 +23,6 @@ class Window(Frame):
         # the location of the font file
         font_path = "fonts/PressStart2P-Regular.ttf"
         return font_manager.FontProperties(fname=font_path)
-
-    def Plot(self):
-        self.v = float(self.textSpeed.get())
-        self.A = float(self.textAmplitude.get())
 
     def animate(self, i):
         value = self.scraper.get_rate()
@@ -40,9 +36,7 @@ class Window(Frame):
 
         self.grid(sticky="NSEW")
         # Create the controls, note use of grid
-
-        self.v = 1.0
-        self.A = 1.0
+        
         self.fig = plt.Figure(
             facecolor="black", edgecolor="black", tight_layout=True, figsize=(4, 2)
         )

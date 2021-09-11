@@ -1,4 +1,4 @@
-Requires python 3.6
+Requires python 3.8
 
 Copy and edit `sample.env` -> `.env`
 

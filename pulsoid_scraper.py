@@ -1,7 +1,7 @@
 import os
 import time
 from selenium import webdriver
-URL = os.environ("PULSOID_URL")
+URL = os.environ.get("PULSOID_URL")
 browser = webdriver.Chrome()
 browser.set_window_size(100, 200)
 

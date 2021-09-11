@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.font_manager as font_manager
-
+from pulsoid_scraper import Scraper
 
 from tkinter import Frame, Label, Entry, Button
 
@@ -14,7 +14,9 @@ class Window(Frame):
         Frame.__init__(self, master)
         self.master = master
         self.font = self.setup_font()
+        self.scraper = Scraper()
         self.config(bg="#0f0f0f")
+        self.data = [0]*240
         self.init_window()
 
     def setup_font(self):
@@ -27,9 +29,11 @@ class Window(Frame):
         self.A = float(self.textAmplitude.get())
 
     def animate(self, i):
-        self.line.set_ydata(
-            self.A * np.sin(self.x + self.v * i) + 65
-        )  # update the data
+        value = self.scraper.get_rate()
+        print(value)
+        self.data = self.data[1:]
+        self.data.append(value)
+        self.line.set_ydata(self.data)  # update the data
         return (self.line,)
 
     def init_window(self):

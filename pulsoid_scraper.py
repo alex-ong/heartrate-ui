@@ -13,10 +13,10 @@ class Scraper:
 
     def get_rate(self):
         try:
-            hr = browser.find_element_by_id("heartRate")
+            hr = self.browser.find_element_by_id("heartRate")
             string = hr.get_attribute("innerHTML")
-            string = string[string.rfind(">") + 1 :]
+            string = string[string.rfind(">") + 1:]
             return int(string)
         except:
             pass
-        return None
+        return 0

@@ -37,7 +37,7 @@ class Window(Frame):
     def setup_hearts(self, canvas):
         renders = []
         self.heart_images = []
-        for index in range(1,6):
+        for index in range(1,4):
             image = Image.open(f"imgs/{index}.png")
             render = ImageTk.PhotoImage(image)
             renders.append(render)

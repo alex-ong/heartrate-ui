@@ -37,7 +37,7 @@ class Window(Frame):
     def setup_hearts(self, canvas):
         renders = []
         self.heart_images = []
-        for index in range(1,4):
+        for index in range(1,6):
             image = Image.open(f"imgs/{index}.png")
             render = ImageTk.PhotoImage(image)
             renders.append(render)
@@ -63,10 +63,23 @@ class Window(Frame):
                 state = tk.HIDDEN
             self.heart_canvas.itemconfigure(self.hearts[i], state=state)
     
-    def animation_order(self):
-        return (list(range(len(self.hearts))) + 
-                list(range(len(self.hearts)-1,0,-1)))
+    def animation_order(self, max_anim):
+        end_count = min(max_anim, len(self.hearts))
+        return (list(range(end_count)) + 
+                list(range(end_count-2,0,-1)))
         
+    def animation_intensity(self, bpm):
+        if bpm < 70:
+            return 2
+        elif bpm < 100:
+            return 3
+        elif bpm < 130:
+            return 4
+        elif bpm < 160:
+            return 5
+        else:
+            return 6
+            
     def animate_heart(self):                
         timer = (time.time() - self.start)
         rate = self.get_bpm()
@@ -75,15 +88,17 @@ class Window(Frame):
             self.master.after(500, self.animate_heart)
             return        
         
-        order = self.animation_order()
+        intensity = self.animation_intensity(rate)
+        
+        order = self.animation_order(intensity)
         anim_steps = len(order)
         anim_time = 60.0/rate
         step_time = int(anim_time / anim_steps * 1000)
 
         for i, index in enumerate(order):
-            self.master.after(step_time * i, lambda index=index: self.animate_heart_step(index))
-            if i == len(order) - 1: # last one
-                self.master.after(step_time*i, self.animate_heart)
+            self.master.after(step_time * (i+1), lambda index=index: self.animate_heart_step(index))
+            if i == anim_steps - 1: # last one
+                self.master.after(step_time*(i+1), self.animate_heart)
             
     
     def animate(self, i):

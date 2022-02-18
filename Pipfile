@@ -8,6 +8,7 @@ requests-html = "*"
 selenium = "*"
 matplotlib = "*"
 pillow = "*"
+chromedriver-autoinstaller = "*"
 
 [dev-packages]
 

@@ -1,9 +1,10 @@
 import os
 import time
 from selenium import webdriver
+import chromedriver_autoinstaller
 
 URL = os.environ.get("PULSOID_URL")
-
+chromedriver_autoinstaller.install()
 
 class Scraper:
     def __init__(self):

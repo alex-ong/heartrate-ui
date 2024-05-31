@@ -6,7 +6,7 @@ Copy and edit `sample.env` -> `.env`
 
 ```bash
 pipenv install
-pipenv run python pulsoid_scraper.py
+pipenv run python main.py
 ```
 
 It will fail the first time, asking you to install chromedriver.exe and add it to your path.

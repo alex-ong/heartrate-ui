@@ -1,0 +1,25 @@
+import os
+import time
+from selenium import webdriver
+import chromedriver_autoinstaller
+
+
+URL = os.environ.get("PULSOID_URL")
+chromedriver_autoinstaller.install()
+
+
+class Scraper:
+    def __init__(self):
+        self.browser = webdriver.Chrome()
+        self.browser.set_window_size(100, 200)
+        self.browser.get(URL)
+
+    def get_rate(self):
+        try:
+            hr = self.browser.find_element_by_id("heartRate")
+            string = hr.get_attribute("innerHTML")
+            string = string[string.rfind(">") + 1 :]
+            return int(string)
+        except:
+            pass
+        return 0

@@ -1,6 +1,7 @@
 import os
 import time
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 import chromedriver_autoinstaller
 
 
@@ -16,10 +17,8 @@ class Scraper:
 
     def get_rate(self):
         try:
-            hr = self.browser.find_element_by_id("heartRate")
-            string = hr.get_attribute("innerHTML")
-            string = string[string.rfind(">") + 1 :]
-            return int(string)
+            hr = self.browser.find_element(By.ID, "heartRate")
+            return int(hr.text)
         except:
             pass
         return 0

@@ -1,1 +1,1 @@
-pipenv run python main.py
+uv run --env-file .env python main.py

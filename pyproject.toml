@@ -1,0 +1,14 @@
+[project]
+name = "pulsoid-scraper"
+version = "0.1.0"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "chromedriver-autoinstaller~=0.6",
+    "matplotlib~=3.9",
+    "numpy>=1.26",
+    "pillow>=10.3",
+    "selenium~=4.21",
+]
+
+[tool.uv]
+package = false

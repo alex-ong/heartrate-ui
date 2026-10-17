@@ -1,12 +1,12 @@
-Requires python 3.8
+Requires Python 3.14 and [uv](https://docs.astral.sh/uv/).
 
 Copy and edit `sample.env` -> `.env`
 
-`pip install pipenv`
+Install dependencies:
 
 ```bash
-pipenv install
-pipenv run python main.py
+uv sync
+uv run python main.py
 ```
 
 It will fail the first time, asking you to install chromedriver.exe and add it to your path.

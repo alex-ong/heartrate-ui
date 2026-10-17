@@ -7,7 +7,7 @@ import matplotlib.font_manager as font_manager
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from PIL import Image, ImageTk
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 
 class Window(Frame):
@@ -24,14 +24,38 @@ class Window(Frame):
 
         self.init_window()
 
-        self.heart_canvas = tk.Canvas(
-            self, width=100, height=100, bg="black", highlightthickness=0
+        self.header = Frame(self, bg="#000000")
+        self.header.grid(column=0, row=0, sticky="EW")
+        self.header.grid_columnconfigure(0, weight=1)
+        rate_font_size = round(12 * self.fig.dpi / 72)
+        self.rate_font = ImageFont.truetype(
+            "fonts/PressStart2P-Regular.ttf", rate_font_size
         )
-        self.heart_canvas.grid(column=0, row=5)
+        self.rate_image = self.render_rate(self.get_bpm())
+        self.rate_label = tk.Label(
+            self.header,
+            image=self.rate_image,
+            bg="#000000",
+        )
+        self.rate_label.grid(column=0, row=0, sticky="NW")
+
+        self.heart_canvas = tk.Canvas(
+            self.header, width=60, height=52, bg="black", highlightthickness=0
+        )
+        self.heart_canvas.grid(column=1, row=0, sticky="NE")
         self.hearts = self.setup_hearts(self.heart_canvas)
 
     def get_bpm(self):
         return self.data[-1]
+
+    def render_rate(self, bpm):
+        text = f"{bpm:3}"
+        left, top, right, bottom = self.rate_font.getbbox("180")
+        image = Image.new("RGB", (right - left, bottom - top), "black")
+        ImageDraw.Draw(image).text(
+            (-left, -top), text, font=self.rate_font, fill="#ff0000"
+        )
+        return ImageTk.PhotoImage(image)
 
     def setup_hearts(self, canvas):
         renders = []
@@ -112,6 +136,8 @@ class Window(Frame):
                 return
             self.data = self.data[1:]
             self.data.append(value)
+            self.rate_image = self.render_rate(self.get_bpm())
+            self.rate_label.config(image=self.rate_image)
             self.line.set_ydata(self.data)
             self.canvas.draw_idle()
             await asyncio.sleep(0.5)

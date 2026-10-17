@@ -1,4 +1,4 @@
-class NullScraper:
+class Scraper:
     def __init__(self):
         self._rate = 60
         self._step = 3

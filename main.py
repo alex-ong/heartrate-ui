@@ -9,6 +9,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--display", choices=("tkinter",), default="tkinter")
     parser.add_argument("--scraper", choices=tuple(SCRAPER_CHOICES), default="pulsoid")
+    parser.add_argument("--scraper-args", nargs="*", default=[])
     args = parser.parse_args()
 
     from display.tkinter_display import run as run_tkinter
@@ -18,6 +19,12 @@ def main():
     scraper_class = getattr(import_module(module_name), class_name)
 
     async def run_selected_display():
+        if args.scraper_args:
+            if args.scraper != "bleak" or args.scraper_args != ["scan"]:
+                parser.error("--scraper-args currently supports only 'bleak scan'")
+            await scraper_class.scan()
+            return
+
         scraper = scraper_class()
         await displays[args.display](scraper)
 

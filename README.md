@@ -6,8 +6,21 @@ Install dependencies:
 
 ```bash
 uv sync
-uv run python main.py
+uv run --env-file .env python main.py
 ```
 
 It will fail the first time, asking you to install chromedriver.exe and add it to your path.
 Follow those instructions
+
+For direct Bluetooth heart-rate monitoring, set `BLEAK_SENSOR_ADDRESS` in `.env` and
+run:
+
+```bash
+uv run --env-file .env python main.py --scraper bleak
+```
+
+To scan for nearby BLE devices and print their names and addresses:
+
+```bash
+uv run --env-file .env python main.py --scraper bleak --scraper-args scan
+```

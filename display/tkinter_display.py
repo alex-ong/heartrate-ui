@@ -116,10 +116,7 @@ class Window(Frame):
         self._closing = True
         if self.ani.event_source is not None:
             self.ani.event_source.stop()
-        try:
-            self.scraper.close()
-        finally:
-            self.master.destroy()
+        self.master.destroy()
 
     def init_window(self):
         self.grid(sticky="NSEW")
@@ -169,4 +166,7 @@ def run(scraper):
     root.config(background="#000000")
     app = Window(root, scraper)
     root.protocol("WM_DELETE_WINDOW", app.close)
-    root.mainloop()
+    try:
+        root.mainloop()
+    finally:
+        scraper.close()

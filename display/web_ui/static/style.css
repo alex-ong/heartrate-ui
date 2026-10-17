@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("/assets/font.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  background: #000;
+  font-family: "Press Start 2P", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: #000;
+}
+
+main {
+  width: min(100%, 640px);
+  padding: 4px;
+  background: #000;
+}
+
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  height: 52px;
+}
+
+#rate {
+  padding-top: 6px;
+  color: #f00;
+  font-size: 16px;
+  line-height: 1;
+  white-space: pre;
+}
+
+#heart {
+  display: block;
+  width: 60px;
+  height: 52px;
+  flex: 0 0 60px;
+}
+
+#graph {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  background: #000;
+}

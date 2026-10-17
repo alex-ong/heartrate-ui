@@ -1,6 +1,8 @@
 import argparse
 import asyncio
 
+from async_utils import await_if_required
+
 from scrapers import SCRAPER_CHOICES, get_scraper_class, scan_scraper
 
 
@@ -14,14 +16,17 @@ def main():
     if args.scraper_args and (args.scraper != "bleak" or args.scraper_args != ["scan"]):
         parser.error("--scraper-args currently supports only 'bleak scan'")
 
-    from display.tkinter_display import run as run_tkinter
+    from display.tk_ui import run as run_tkinter
 
     async def run_selected_display():
         if args.scraper_args:
             await scan_scraper(args.scraper)
             return
-        scraper = get_scraper_class(args.scraper)() 
-        await run_tkinter(scraper)
+        scraper = get_scraper_class(args.scraper)()
+        try:
+            await run_tkinter(scraper)
+        finally:
+            await await_if_required(scraper.close())
 
     asyncio.run(run_selected_display())
 

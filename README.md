@@ -9,6 +9,18 @@ uv sync
 uv run --env-file .env python main.py
 ```
 
+Format code:
+
+```bash
+uv run ruff format .
+```
+
+Run Ruff lint checks:
+
+```bash
+uv run ruff check .
+```
+
 It will fail the first time, asking you to install chromedriver.exe and add it to your path.
 Follow those instructions
 

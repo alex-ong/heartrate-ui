@@ -72,7 +72,7 @@ class Window(Frame):
 
 async def run(scraper):
     root = tk.Tk()
-    root.title("Pulsoid-Tracker")
+    root.title("Heart-Tracker")
     root.config(background="#000000")
     app = Window(root, scraper)
     root.protocol("WM_DELETE_WINDOW", app.close)

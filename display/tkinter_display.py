@@ -1,8 +1,8 @@
+import asyncio
+import inspect
 import tkinter as tk
-import time
 from tkinter import Frame
 
-import matplotlib.animation as animation
 import matplotlib.font_manager as font_manager
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,6 +18,7 @@ class Window(Frame):
 
         self.scraper = scraper
         self._closing = False
+        self.closed = asyncio.Event()
         self.config(bg="#000000")
         self.data = [60] * 240
 
@@ -28,9 +29,6 @@ class Window(Frame):
         )
         self.heart_canvas.grid(column=0, row=5)
         self.hearts = self.setup_hearts(self.heart_canvas)
-
-        self.start = time.time()
-        self.animate_heart()
 
     def get_bpm(self):
         return self.data[-1]
@@ -79,43 +77,50 @@ class Window(Frame):
         else:
             return 6
 
-    def animate_heart(self):
-        rate = self.get_bpm()
-        if rate == 0:
-            self.animate_heart_step(-1)
-            self.master.after(500, self.animate_heart)
-            return
+    async def pump_tk(self):
+        while not self._closing:
+            try:
+                self.master.update()
+            except tk.TclError:
+                self.close()
+                return
+            await asyncio.sleep(1 / 60)
 
-        intensity = self.animation_intensity(rate)
+    async def animate_heart(self):
+        while not self._closing:
+            rate = self.get_bpm()
+            if rate == 0:
+                self.animate_heart_step(-1)
+                await asyncio.sleep(0.5)
+                continue
 
-        order = self.animation_order(intensity)
-        anim_steps = len(order)
-        anim_time = 60.0 / rate
-        step_time = int(anim_time / anim_steps * 1000)
+            order = self.animation_order(self.animation_intensity(rate))
+            step_time = 60.0 / rate / len(order)
+            for index in order:
+                if self._closing:
+                    return
+                self.animate_heart_step(index)
+                await asyncio.sleep(step_time)
 
-        for i, index in enumerate(order):
-            self.master.after(
-                step_time * (i + 1), lambda index=index: self.animate_heart_step(index)
-            )
-            if i == anim_steps - 1:
-                self.master.after(step_time * (i + 1), self.animate_heart)
-
-    def animate(self, i):
-        value = self.scraper.get_rate()
-        if value is None:
-            self.master.after_idle(self.close)
-            return (self.line,)
-        self.data = self.data[1:]
-        self.data.append(value)
-        self.line.set_ydata(self.data)
-        return (self.line,)
+    async def pull_data(self):
+        while not self._closing:
+            value = self.scraper.get_rate()
+            if inspect.isawaitable(value):
+                value = await value
+            if value is None:
+                self.close()
+                return
+            self.data = self.data[1:]
+            self.data.append(value)
+            self.line.set_ydata(self.data)
+            self.canvas.draw_idle()
+            await asyncio.sleep(0.5)
 
     def close(self):
         if self._closing:
             return
         self._closing = True
-        if self.ani.event_source is not None:
-            self.ani.event_source.stop()
+        self.closed.set()
         self.master.destroy()
 
     def init_window(self):
@@ -155,18 +160,25 @@ class Window(Frame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().grid(column=0, row=4)
 
-        self.ani = animation.FuncAnimation(
-            self.fig, self.animate, np.arange(1, 200), interval=500, blit=False
-        )
 
-
-def run(scraper):
+async def run(scraper):
     root = tk.Tk()
     root.title("Pulsoid-Tracker")
     root.config(background="#000000")
     app = Window(root, scraper)
     root.protocol("WM_DELETE_WINDOW", app.close)
+    tasks = [
+        asyncio.create_task(app.pump_tk()),
+        asyncio.create_task(app.animate_heart()),
+        asyncio.create_task(app.pull_data()),
+    ]
     try:
-        root.mainloop()
+        await app.closed.wait()
     finally:
-        scraper.close()
+        app.close()
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        close_result = scraper.close()
+        if inspect.isawaitable(close_result):
+            await close_result

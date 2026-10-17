@@ -64,42 +64,46 @@ function drawGraph() {
 
   const ratio = window.devicePixelRatio || 1;
   const width = bounds.width;
-  const height = width / 2;
+  const scale = width / 400;
+  const height = 200 * scale;
   graphCanvas.width = Math.round(width * ratio);
   graphCanvas.height = Math.round(height * ratio);
   graphContext.setTransform(ratio, 0, 0, ratio, 0, 0);
   graphContext.clearRect(0, 0, width, height);
 
-  const ticks = Array.from({ length: 9 }, (_, index) => 40 + index * 20);
-  graphContext.font = '16px "Press Start 2P", monospace';
-  const labelWidth = Math.max(
-    ...ticks.map((tick) => graphContext.measureText(String(tick)).width),
-  );
-  const left = 4;
-  const right = width - labelWidth - 12;
-  const top = 8;
-  const bottom = height - 8;
+  const ticks = [50, 100, 150, 200];
+  graphContext.font = `${16.67 * scale}px "Press Start 2P", monospace`;
+  const left = 19.5 * scale;
+  const right = 324.278 * scale;
+  const labelX = 334 * scale;
+  const top = 23.5 * scale;
+  const bottom = 161.389 * scale;
   graphContext.textBaseline = "middle";
   ticks.forEach((tick, index) => {
     const y = bottom - ((tick - 40) / 160) * (bottom - top);
-    const green = Math.round(15 + (200 / (ticks.length - 1)) * index);
+    const green = 65 + index * 50;
     graphContext.fillStyle = `rgb(255, ${green}, 0)`;
-    graphContext.fillText(String(tick), right + 6, y);
+    graphContext.fillText(String(tick), labelX, y);
   });
 
   graphContext.strokeStyle = "red";
-  graphContext.lineWidth = 1;
+  graphContext.lineWidth = (0.8 * 100 / 72) * scale;
   graphContext.beginPath();
+  ticks.forEach((tick) => {
+    const y = bottom - ((tick - 40) / 160) * (bottom - top);
+    graphContext.moveTo(right, y);
+    graphContext.lineTo(right + (3.5 * 100 / 72) * scale, y);
+  });
   graphContext.moveTo(right, top);
   graphContext.lineTo(right, bottom);
   graphContext.lineTo(left, bottom);
   graphContext.stroke();
 
   graphContext.strokeStyle = "#f00";
-  graphContext.lineWidth = 3;
+  graphContext.lineWidth = (3 * 100 / 72) * scale;
   graphContext.beginPath();
   history.forEach((value, index) => {
-    const x = left + (index / (history.length - 1)) * (right - left);
+    const x = left + (index / 240) * (right - left);
     const y = bottom - ((value - 40) / 160) * (bottom - top);
     if (index === 0) graphContext.moveTo(x, y);
     else graphContext.lineTo(x, y);

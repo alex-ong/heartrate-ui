@@ -23,8 +23,8 @@ body {
 }
 
 main {
-  width: min(100%, 640px);
-  padding: 4px;
+  width: min(100%, 400px);
+  padding: 0;
   background: #000;
 }
 
@@ -54,6 +54,6 @@ header {
 #graph {
   display: block;
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 4 / 2;
   background: #000;
 }

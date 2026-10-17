@@ -2,6 +2,13 @@ import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import (
+    InvalidSessionIdException,
+    NoSuchElementException,
+    NoSuchWindowException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
 import chromedriver_autoinstaller
 
 
@@ -19,9 +26,13 @@ class Scraper:
         try:
             hr = self.browser.find_element(By.ID, "heartRate")
             return int(hr.text)
-        except:
-            pass
-        return 0
+        except (NoSuchWindowException, InvalidSessionIdException):
+            return None
+        except (NoSuchElementException, StaleElementReferenceException, ValueError):
+            return 0
 
     def close(self):
-        self.browser.quit()
+        try:
+            self.browser.quit()
+        except WebDriverException:
+            pass

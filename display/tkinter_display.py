@@ -17,6 +17,7 @@ class Window(Frame):
         self.font = self.setup_font()
 
         self.scraper = scraper
+        self._closing = False
         self.config(bg="#000000")
         self.data = [60] * 240
 
@@ -101,12 +102,18 @@ class Window(Frame):
 
     def animate(self, i):
         value = self.scraper.get_rate()
+        if value is None:
+            self.master.after_idle(self.close)
+            return (self.line,)
         self.data = self.data[1:]
         self.data.append(value)
         self.line.set_ydata(self.data)
         return (self.line,)
 
     def close(self):
+        if self._closing:
+            return
+        self._closing = True
         if self.ani.event_source is not None:
             self.ani.event_source.stop()
         try:

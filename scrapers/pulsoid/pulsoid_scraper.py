@@ -22,3 +22,6 @@ class Scraper:
         except:
             pass
         return 0
+
+    def close(self):
+        self.browser.quit()

@@ -1,10 +1,6 @@
 import os
-import time
-from urllib.error import URLError
-from urllib.request import urlopen
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import (
     InvalidSessionIdException,
@@ -19,6 +15,7 @@ import chromedriver_autoinstaller
 URL = os.environ.get("PULSOID_URL")
 chromedriver_autoinstaller.install()
 
+
 class Scraper:
     def __init__(self):
         self.browser_closed = False
@@ -30,10 +27,10 @@ class Scraper:
         try:
             hr = self.browser.find_element(By.ID, "heartRate")
             return int(hr.text)
-        except (NoSuchWindowException, InvalidSessionIdException):
+        except NoSuchWindowException, InvalidSessionIdException:
             self.browser_closed = True
             return None
-        except (NoSuchElementException, StaleElementReferenceException, ValueError):
+        except NoSuchElementException, StaleElementReferenceException, ValueError:
             return 0
 
     def close(self):
